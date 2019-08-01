@@ -1,37 +1,49 @@
 *{
     margin: 0;
     padding: 0;
+    font-size: 16px;
 }
 
 
-body,
-.wrap,
+
+.pomodoro {
+   background-color:  #660b0b;
+}
+
+.counter {
+    background: #ccc;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+
 .timer {
+    
     display: flex;
     justify-content: center;
-}
-
-
-body {
-    background: #660b0b;
-}
-
-.wrap {
     align-items: center;
-    height: 50vh;
-    width: 90%;
-}
-
-.timer {
-    align-items: center;
-    background-color: #cecece;
-    width: 20%;
+    background-color: #fff;
+    width: 210px;
     height: 15%;
     border-radius: 15px;
     
 }
 
 span {
-    font-size: 300%;
+    font-size: 3rem;
     margin: 0 15px;
 }
+
+button {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+/* BOOTSTRAP CUSTOM */
+
+.display-4 {
+    color: #fff;
+}
+
