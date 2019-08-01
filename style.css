@@ -17,9 +17,7 @@
     border-radius: 50%;
 }
 
-
-.timer {
-    
+.timer { 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,7 +25,6 @@
     width: 210px;
     height: 15%;
     border-radius: 15px;
-    
 }
 
 span {
@@ -39,6 +36,11 @@ button {
     margin-top: 20px;
     padding: 10px;
     border-radius: 6px;
+}
+
+#alert {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* BOOTSTRAP CUSTOM */
