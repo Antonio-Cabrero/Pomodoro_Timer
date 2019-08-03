@@ -7,7 +7,7 @@ const timerSec = document.getElementById('sec'),
       startInt = document.querySelector('.start'),
       pauseInt = document.querySelector('.stop'),
       timerBody = document.querySelector('.pomodoro'),
-      workCounter = document.querySelector('.work-counter'),
+      workCounter = document.querySelector('.work-counter').children,
       alertContainer = document.querySelector('#alert'),
       breakBtn = document.querySelector('.break'),
       continueBtn = document.querySelector('.continue');
@@ -15,10 +15,11 @@ const timerSec = document.getElementById('sec'),
 
 // Key Variables
 
-let timeForBreak = false;     // TRACKER FOR BREAK ACTION
+let shortBreak = false;       // TRACKER FOR SHORT BREAK
+let longBreak = false;         // TRACKER FOR LONG BREAK
 let pause = false;            // TRACKER FOR PAUSE ACTION
 let workSession = 0;          // TRACKER FOR WORK SESSIONS
-let seconds = 5;              // SETS SECONDS
+let seconds = 0;              // SETS SECONDS
 let minutes;                
 
 timerSec.innerHTML = "00"; 
@@ -27,7 +28,7 @@ timerMin.innerHTML = "00";
 
 // Functions
 
-function sessionTimer() { // TIMER
+function sessionTimer() { 
   
   let timer = setInterval( () => { // RUNS EACH FUNCTION EVERY SECOND
     
@@ -42,15 +43,18 @@ function sessionTimer() { // TIMER
 }
 
 function startSession () {
+  
   timerBody.style.backgroundColor = '#399721';  // SETS BACK GROUND TO COLOR FOR 'IN WORK SESSION'
-  minutes = 1;                                  // SETS THE TIME OF THE SESSION
+  minutes = 20;                                  // SETS THE TIME OF THE SESSION
   sessionTimer();                               // STARTS TIMER
+
 } 
 
-function breakSession() { // STARTS A BREAK TIMER
+function breakSession () { // STARTS A BREAK TIMER
   
-  if (workSession === 3) {  // CHECK IF USER HAS HAD 4 WORK SESSIONS (COUNTER STARTS AT 0)
+  if (workSession === 4) {  // CHECK IF USER HAS HAD 4 WORK SESSIONS (COUNTER STARTS AT 0)
     minutes = 20;           // LONG BREAK IS SET
+    resetWork();
     sessionTimer();         // TIMER STARTS
 
    } else {
@@ -64,25 +68,27 @@ function breakSession() { // STARTS A BREAK TIMER
 
 function printTime () {   
 
-    timerSec.innerHTML = seconds; // PRINTS TO DOM
-    timerMin.innerHTML = minutes; // PRINTS TO DOM
+  timerSec.innerHTML = seconds; // PRINTS TO DOM
+  timerMin.innerHTML = minutes; // PRINTS TO DOM
 
-    if (minutes < 10 ) {                     // ADDS A '0' IF VALUE IS LESS THAN 10
-      timerMin.innerHTML = "0" + minutes;
-    } 
+  if (minutes < 10 ) {                     // ADDS A '0' IF VALUE IS LESS THAN 10
+    timerMin.innerHTML = "0" + minutes;
+  } 
 
-    if ( seconds < 10) {                    // ADDS A '0' IF VALUE IS LESS THAN 10
-    timerSec.innerHTML = "0" + seconds;
-    }
+  if ( seconds < 10) {                    // ADDS A '0' IF VALUE IS LESS THAN 10
+  timerSec.innerHTML = "0" + seconds;
+  }
+
 }
 
 function secondsCounter() {
 
-    seconds -= 1;         // DECREASES SECONDS BY 1
-    if (seconds === -1) {  
-      seconds = 5;        // RESTARTS SECONDS AND SUBTRACTS 1 FROM MINUTES
-      minutes -= 1; 
-    } 
+  seconds -= 1;         // DECREASES SECONDS BY 1
+  if (seconds === -1) {  
+    seconds = 59;        // RESTARTS SECONDS AND SUBTRACTS 1 FROM MINUTES
+    minutes -= 1; 
+  }
+
 }
 
 function timerStop(timer) {
@@ -90,9 +96,9 @@ function timerStop(timer) {
   if (minutes === 0 && seconds === 0) {
     clearInterval(timer);                                                 // STOPS INTERVAL
     timerBody.style.backgroundColor = '#1e7fda';                          // Bg COLOR CHANGE TO BREAK COLOR
-    alertContainer.style.display = "block";                               // DISPLAY ALERT
-    workCounter.children[ workSession ].style.backgroundColor = '#399721';// ADD 1 TO WORK SESSION TRACKER
+    workCounter[ workSession ].style.backgroundColor = '#399721';         // ADD 1 TO WORK SESSION TRACKER
     workSession += 1;                                                     // ALSO ADD 1 TO THE VARIABLE WORK COUNTER
+    alertDisplay();
   } 
 
 }
@@ -104,42 +110,80 @@ function pauseBtn(timer){         // CREATES EVENT LISTENER FOR PAUSE BTN
     if (element === pauseInt){    // CHECKS IF PAUSE BUTTON IS CLICKED
     
       pause = true;               // CHANGES VALUE OF PAUSE VARIABLE
-      clearInterval(timer);       // STOPS INTERVAL
-    
+      clearInterval(timer);       // STOPS INTERVAL  
     } 
   })
+
 }
 
+function resetWork() {
+
+  workSession = 0;                                 // RESETS SESSION TRACKER
+  for (let i = 0; i < workCounter.length; i ++){
+    workCounter[i].style.backgroundColor = "#ccc"; // CHANGE WORK SESION TRACKERS BACK TO GREY
+  }
+
+}
+
+function alertDisplay () {
+
+  let text = document.querySelector('.modal-content');
+  
+
+  alertContainer.style.display = "block";            // DISPLAY ALERT
+
+  if (workSession === 4) {                           // DISPLAYS LONG BREAK MESSAGE
+    text.innerHTML = `
+      <h2 class="modal-title mx-auto mt-3">It's time for a LOONG break!</h2>
+      <p class="modal-body mx-auto">Go out for a walk, stretch a bit or just go get something to eat</p>
+      <div class="mx-auto my-3">
+          <button class="btn btn-outline-primary break">Break</button>
+      </div>
+    `
+  } else if (workSession < 4) {                     // DISPLAYS SHORT BREAK MESSAGE
+    text.innerHTML = `
+      <h2 class="modal-title mx-auto mt-3">It's time for a short break!</h2>
+      <p class="modal-body mx-auto">Go get a coffee or a snack, walk a bit or would you like to keep going?</p>
+      <div class="mx-auto my-3">
+        <button class="btn btn-outline-primary break">Break</button>
+        <button class="btn btn-outline-success continue">Keep going!</button>
+      </div>
+      `
+  }
+
+
+}
 
 // Listeners
 
 startInt.addEventListener('click', ()=>{ 
-  
-    if (pause === false) {        // CHEKS OF PROGRAM IS NOT ON PAUSE
-      startSession();             // START A NEW WORK SESSION
 
-    } else if (pause === true) {  // CHECKS IF PROGRAM IS ON PAUSE
-      pause = false;              // CHANGES PAUSE VALUE (TO UNPAUSE)
-      sessionTimer();             // CONTINUES TIMER
-    }
+  if (pause === false) {        // CHEKS OF PROGRAM IS NOT ON PAUSE
+    startSession();             // START A NEW WORK SESSION
+
+  } else if (pause === true) {  // CHECKS IF PROGRAM IS ON PAUSE
+    pause = false;              // CHANGES PAUSE VALUE (TO UNPAUSE)
+    sessionTimer();             // CONTINUES TIMER
+  }
 
 });
-
 
 alertContainer.addEventListener('click', (e)=> {
   let element = e.target;
 
-  if (element === breakBtn) {               // CHECKS IF BREAK BTN IS CLICKED
+  if (element.innerText === 'Break') {               // CHECKS IF BREAK BTN IS CLICKED
 
     breakSession();                         // TRIGGERS BREAK SESSION FUNCTION
     alertContainer.style.display = "none";  // HIDES ALERT BOX
 
   } 
-  
-  if (element === continueBtn) {            // CHECKS IF BREAK BTN IS CLICKED
+
+  if (element.innerText === 'Keep going!') {            // CHECKS IF BREAK BTN IS CLICKED
 
     startSession();                         // TRIGGERS WORK SESSION FUNCTION
     alertContainer.style.display = "none";  // HIDES ALERT BOX
 
   }
-})
+
+});
+
