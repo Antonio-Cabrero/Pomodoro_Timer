@@ -15,8 +15,6 @@ const timerSec = document.getElementById('sec'),
 
 // Key Variables
 
-let shortBreak = false;       // TRACKER FOR SHORT BREAK
-let longBreak = false;         // TRACKER FOR LONG BREAK
 let pause = false;            // TRACKER FOR PAUSE ACTION
 let workSession = 0;          // TRACKER FOR WORK SESSIONS
 let seconds = 0;              // SETS SECONDS
@@ -94,6 +92,7 @@ function secondsCounter() {
 function timerStop(timer) {
 
   if (minutes === 0 && seconds === 0) {
+    
     clearInterval(timer);                                                 // STOPS INTERVAL
     timerBody.style.backgroundColor = '#1e7fda';                          // Bg COLOR CHANGE TO BREAK COLOR
     workCounter[ workSession ].style.backgroundColor = '#399721';         // ADD 1 TO WORK SESSION TRACKER
@@ -134,19 +133,19 @@ function alertDisplay () {
 
   if (workSession === 4) {                           // DISPLAYS LONG BREAK MESSAGE
     text.innerHTML = `
-      <h2 class="modal-title mx-auto mt-3">It's time for a LOONG break!</h2>
-      <p class="modal-body mx-auto">Go out for a walk, stretch a bit or just go get something to eat</p>
-      <div class="mx-auto my-3">
+      <h2 class="modal-title display-4 mx-auto mt-3">It's time for a long break!</h2>
+      <p class="modal-body mx-auto">Go walk for a bit, get something to eat or just stretch it out! You've earned it!</p>
+      <div class="mx-auto mb-3">
           <button class="btn btn-outline-primary break">Break</button>
       </div>
     `
   } else if (workSession < 4) {                     // DISPLAYS SHORT BREAK MESSAGE
     text.innerHTML = `
-      <h2 class="modal-title mx-auto mt-3">It's time for a short break!</h2>
+      <h2 class="modal-title display-4 mx-auto mt-3">It's time for a short break!</h2>
       <p class="modal-body mx-auto">Go get a coffee or a snack, walk a bit or would you like to keep going?</p>
-      <div class="mx-auto my-3">
-        <button class="btn btn-outline-primary break">Break</button>
-        <button class="btn btn-outline-success continue">Keep going!</button>
+      <div class="mx-auto mb-3">
+          <button class="btn btn-outline-primary break">Break</button>
+          <button class="btn btn-outline-success continue">Keep going!</button>
       </div>
       `
   }
@@ -170,7 +169,7 @@ startInt.addEventListener('click', ()=>{
 
 alertContainer.addEventListener('click', (e)=> {
   let element = e.target;
-
+  console.log(element);
   if (element.innerText === 'Break') {               // CHECKS IF BREAK BTN IS CLICKED
 
     breakSession();                         // TRIGGERS BREAK SESSION FUNCTION
