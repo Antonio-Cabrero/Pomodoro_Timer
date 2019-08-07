@@ -20,6 +20,7 @@ const chimeBell = document.querySelector('.chime');
 
 // Key Variables
 
+let onBreak = false;
 let pause = false;            // TRACKER FOR PAUSE ACTION
 let workSession = 0;          // TRACKER FOR WORK SESSIONS
 let seconds = 0;              // SETS SECONDS
@@ -48,7 +49,7 @@ function sessionTimer() {
 function startSession () {
   
   timerBody.style.backgroundColor = '#399721';  // SETS BACK GROUND TO COLOR FOR 'IN WORK SESSION'
-  minutes = 01;                                  // SETS THE TIME OF THE SESSION
+  minutes = 20;                                  // SETS THE TIME OF THE SESSION
   sessionTimer();                               // STARTS TIMER
 
 } 
@@ -88,7 +89,7 @@ function secondsCounter() {
 
   seconds -= 1;         // DECREASES SECONDS BY 1
   if (seconds === -1) {  
-    seconds = 5;        // RESTARTS SECONDS AND SUBTRACTS 1 FROM MINUTES
+    seconds = 59;        // RESTARTS SECONDS AND SUBTRACTS 1 FROM MINUTES
     minutes -= 1; 
   }
 
@@ -133,19 +134,28 @@ function alertDisplay () {
 
   let text = document.querySelector('.modal-content');
   
-  chimeBell.play();
+  chimeBell.play();                                   // PLAY CHIME BELL
   
   alertContainer.style.display = "block";            // DISPLAY ALERT
 
-  if (workSession === 4) {                           // DISPLAYS LONG BREAK MESSAGE
+  if (onBreak === true) {                                                               // DISPLAYS BACK TO WORK MESSAGE
+    text.innerHTML =
+    `<h2 class="modal-title display-4 mx-auto mt-3">It's time to work!</h2>
+      <p class="modal-body mx-auto">Keep on the good work after that nice break!</p>
+      <div class="mx-auto mb-3">
+      <button class="btn btn-outline-success continue">Keep going!</button>
+      </div>
+      `;
+
+  } else if (workSession === 4) {                                                       // DISPLAYS LONG BREAK MESSAGE
     text.innerHTML = `
       <h2 class="modal-title display-4 mx-auto mt-3">It's time for a long break!</h2>
       <p class="modal-body mx-auto">Go walk for a bit, get something to eat or just stretch it out! You've earned it!</p>
       <div class="mx-auto mb-3">
           <button class="btn btn-outline-primary break">Break</button>
       </div>
-    `
-  } else if (workSession < 4) {                     // DISPLAYS SHORT BREAK MESSAGE
+    ` ;
+  } else if (workSession < 4) {                                                       // DISPLAYS SHORT BREAK MESSAGE
     text.innerHTML = `
       <h2 class="modal-title display-4 mx-auto mt-3">It's time for a short break!</h2>
       <p class="modal-body mx-auto">Go get a coffee or a snack, walk a bit or would you like to keep going?</p>
@@ -153,10 +163,13 @@ function alertDisplay () {
           <button class="btn btn-outline-primary break">Break</button>
           <button class="btn btn-outline-success continue">Keep going!</button>
       </div>
-      `
+      `;
   }
+}
 
-
+function stopBell() {  // STOPS AND RESETS THE BELL SOUND
+  chimeBell.pause();
+  chimeBell.currentTime = 0;
 }
 
 // Listeners
@@ -177,18 +190,18 @@ alertContainer.addEventListener('click', (e)=> {
   let element = e.target;
 
   if (element.innerText === 'Break') {               // CHECKS IF BREAK BTN IS CLICKED
-    chimeBell.pause();
-    chimeBell.currentTime = 0;
-    breakSession();                         // TRIGGERS BREAK SESSION FUNCTION
-    alertContainer.style.display = "none";  // HIDES ALERT BOX
+    onBreak = true;
+    stopBell();
+    breakSession();                                  // TRIGGERS BREAK SESSION FUNCTION
+    alertContainer.style.display = "none";           // HIDES ALERT BOX
 
   } 
 
   if (element.innerText === 'Keep going!') {            // CHECKS IF BREAK BTN IS CLICKED
-    chimeBell.pause();
-    chimeBell.currentTime = 0;
-    startSession();                         // TRIGGERS WORK SESSION FUNCTION
-    alertContainer.style.display = "none";  // HIDES ALERT BOX
+    onBreak = false;
+    stopBell();
+    startSession();                                     // TRIGGERS WORK SESSION FUNCTION
+    alertContainer.style.display = "none";              // HIDES ALERT BOX
 
   }
 

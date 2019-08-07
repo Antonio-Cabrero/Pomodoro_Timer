@@ -25,15 +25,88 @@
             </div>
             <div class="p-3 d-flex">
                 <h3>Work Sessions</h3>
-                <div class="d-flex align-items-center ml-auto work-counter">
-                    <span class="counter ml-4"></span>
-                    <span class="counter ml-4"></span>
-                    <span class="counter ml-4"></span>
-                    <span class="counter ml-4"></span>
+                <div class="d-flex align-items-center ml-auto work-counter flex-wrap">
+                    <span class="counter ml-2"></span>
+                    <span class="counter ml-2"></span>
+                    <span class="counter ml-2"></span>
+                    <span class="counter ml-2"></span>
                 </div>
             </div>
             
+            <div id="accordion">
+                    <div class="card">
+                      <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                          <div class="aboutTimer my-2" data-toggle="collapse" data-target="#aboutTimer" aria-expanded="true" aria-controls="collapseOne">
+                            What am I?
+                          </div>
+                        </h5>
+                      </div>
+                  
+                      <div id="aboutTimer" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                           <p> The Pomodoro Technique was invented in the early 1990s by developer, entrepreneur, and author Francesco Cirillo. Cirillo named the system “Pomodoro” after the tomato-shaped timer he used to track his work as a university student. The methodology is simple: When faced with any large task or series of tasks, break the work down into short, timed intervals (called “Pomodoros”) that are spaced out by short breaks. This trains your brain to focus for short periods and helps you stay on top of deadlines or constantly-refilling inboxes. With time it can even help improve your attention span and concentration.
+                                <p class="h6 text-muted mt-3">This was directly taken from <a href="https://lifehacker.com/productivity-101-a-primer-to-the-pomodoro-technique-1598992730" target="_blank">lifehacker.com</a></p>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                          <div class="howUse my-2" data-toggle="collapse" data-target="#howToUse" aria-expanded="false" aria-controls="collapseTwo">
+                            How to use?
+                          </div>
+                        </h5>
+                      </div>
+                      <div id="howToUse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div class="card-body">
+                            <h3 class="mb-3 h6">Instructions</h3>
+                            <ol class="ml-3">
+                                <li>Decide on a task to do!</li>
+                                <li>Start the timer and work for the total minutes show in the timer countdown. <br>(Minimize the window to prevent from closing the tab accidentally.)</li>
+                                <li>When you hear the bell ring the timer has finished you can either take a break or keep going!</li>
+                                <li>Once you reach 4 work sessions you'll be awarded a nice long break and the work session count will restart!</li>
+                            </ol>
+                            <ul class="ml-3">
+                                <li>If you get interrupted you can always pause the timer with the pause button.</li>
+                                <li>To reset the work session counter finish 4 work sessions or reload the page.</li>
+                            </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-header" id="headingThree">
+                        <h5 class="mb-0">
+                          <div class="howBuilt my-2" data-toggle="collapse" data-target="#howBuilt" aria-expanded="false" aria-controls="collapseThree">
+                            How was I built?
+                          </div>
+                        </h5>
+                      </div>
+                      <div id="howBuilt" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                        <div class="card-body row">
+                           <div class="col">
+                               <h3 class="mb-3 h6">JavaScript</h3>                                    
+                            <p>This very simple browser app was used using the power of JavaScript for functionality.</p>
+                           </div>
+                           <div class="col">
+                               <h3 class="mb-3 h6">Bootstrap</h3> 
+                               <p>I used Bootstrap for quick styling however there were some custom styles modifications.</p>
+                           </div>
+                        </div>
+                        <div class="card-body row">
+                             <a class="ml-3" href="https://github.com/Antonio-Cabrero/Pomodoro_Timer" target="_blank">Here's the repo to the project!</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
         </div>
+        
+       
+
+
+
+
         <div id="alert" class="modal">
             <div class="alert-box modal-dialog mx-auto p-5 h-auto rounded text-center">
                 <div class="modal-content">

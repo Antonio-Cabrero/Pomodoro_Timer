@@ -50,6 +50,12 @@ button {
 .chime {
     display: none;
 }
+
+.aboutTimer,
+.howUse,
+.howBuilt {
+    cursor: pointer;
+}
 /* BOOTSTRAP CUSTOM */
 
 .display-4 {
@@ -63,5 +69,13 @@ button {
 
 .modal-content {
     border: none;
+    background-color: transparent;
+}
+
+.card {
+    border: none;
+}
+
+.card-header {
     background-color: transparent;
 }
