@@ -13,6 +13,11 @@ const timerSec = document.getElementById('sec'),
       continueBtn = document.querySelector('.continue');
 
 
+
+// Chime Sound
+
+const chimeBell = document.querySelector('.chime');
+
 // Key Variables
 
 let pause = false;            // TRACKER FOR PAUSE ACTION
@@ -43,7 +48,7 @@ function sessionTimer() {
 function startSession () {
   
   timerBody.style.backgroundColor = '#399721';  // SETS BACK GROUND TO COLOR FOR 'IN WORK SESSION'
-  minutes = 20;                                  // SETS THE TIME OF THE SESSION
+  minutes = 01;                                  // SETS THE TIME OF THE SESSION
   sessionTimer();                               // STARTS TIMER
 
 } 
@@ -83,7 +88,7 @@ function secondsCounter() {
 
   seconds -= 1;         // DECREASES SECONDS BY 1
   if (seconds === -1) {  
-    seconds = 59;        // RESTARTS SECONDS AND SUBTRACTS 1 FROM MINUTES
+    seconds = 5;        // RESTARTS SECONDS AND SUBTRACTS 1 FROM MINUTES
     minutes -= 1; 
   }
 
@@ -128,7 +133,8 @@ function alertDisplay () {
 
   let text = document.querySelector('.modal-content');
   
-
+  chimeBell.play();
+  
   alertContainer.style.display = "block";            // DISPLAY ALERT
 
   if (workSession === 4) {                           // DISPLAYS LONG BREAK MESSAGE
@@ -169,20 +175,21 @@ startInt.addEventListener('click', ()=>{
 
 alertContainer.addEventListener('click', (e)=> {
   let element = e.target;
-  console.log(element);
-  if (element.innerText === 'Break') {               // CHECKS IF BREAK BTN IS CLICKED
 
+  if (element.innerText === 'Break') {               // CHECKS IF BREAK BTN IS CLICKED
+    chimeBell.pause();
+    chimeBell.currentTime = 0;
     breakSession();                         // TRIGGERS BREAK SESSION FUNCTION
     alertContainer.style.display = "none";  // HIDES ALERT BOX
 
   } 
 
   if (element.innerText === 'Keep going!') {            // CHECKS IF BREAK BTN IS CLICKED
-
+    chimeBell.pause();
+    chimeBell.currentTime = 0;
     startSession();                         // TRIGGERS WORK SESSION FUNCTION
     alertContainer.style.display = "none";  // HIDES ALERT BOX
 
   }
 
 });
-
