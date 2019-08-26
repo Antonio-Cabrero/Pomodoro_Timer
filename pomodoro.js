@@ -5,6 +5,7 @@
 const timerSec = document.getElementById('sec'),
       timerMin = document.getElementById('minutes'),
       startInt = document.querySelector('.start'),
+      resetBtn = document.querySelector('.reset'),
       pauseInt = document.querySelector('.stop'),
       timerBody = document.querySelector('.pomodoro'),
       workCounter = document.querySelector('.work-counter').children,
@@ -20,6 +21,8 @@ const chimeBell = document.querySelector('.chime');
 
 // Key Variables
 
+let timer;
+let working = false;
 let onBreak = false;
 let pause = false;            // TRACKER FOR PAUSE ACTION
 let workSession = 0;          // TRACKER FOR WORK SESSIONS
@@ -27,15 +30,14 @@ let seconds = 0;              // SETS SECONDS
 let minutes;                
 
 timerSec.innerHTML = "00"; 
-timerMin.innerHTML = "00"; 
+timerMin.innerHTML = "20"; 
 
 
 // Functions
 
 function sessionTimer() { 
   
-  let timer = setInterval( () => { // RUNS EACH FUNCTION EVERY SECOND
-    
+  timer = setInterval( () => { // RUNS EACH FUNCTION EVERY SECOND
     
     pauseBtn(timer);              //  CHECKS FOR PAUSING
     secondsCounter();             //  SUBTRACTS 1 SECOND & CHECKS IF SECONDS IS NOT 0, IF ITS THEN IT SUBSTRACTS 1 FROM MINUTES AND RESETS THE SECONDS 
@@ -43,13 +45,20 @@ function sessionTimer() {
     timerStop(timer);             //  STOPS TIMER IF MINUTES & SECONDS REACHES 0
 
   }, 1000)
+}
+
+function sessionSetUp () {
   
+  minutes = 20;                                  // SETS THE TIME OF THE SESSION
+  seconds = 0;
+  timerSec.innerHTML = "00"; 
+  timerMin.innerHTML = "20"; 
 }
 
 function startSession () {
   
   timerBody.style.backgroundColor = '#399721';  // SETS BACK GROUND TO COLOR FOR 'IN WORK SESSION'
-  minutes = 20;                                  // SETS THE TIME OF THE SESSION
+  sessionSetUp();
   sessionTimer();                               // STARTS TIMER
 
 } 
@@ -121,6 +130,7 @@ function pauseBtn(timer){         // CREATES EVENT LISTENER FOR PAUSE BTN
 
 }
 
+
 function resetWork() {
 
   workSession = 0;                                 // RESETS SESSION TRACKER
@@ -176,8 +186,9 @@ function stopBell() {  // STOPS AND RESETS THE BELL SOUND
 
 startInt.addEventListener('click', ()=>{ 
 
-  if (pause === false) {        // CHEKS OF PROGRAM IS NOT ON PAUSE
-    startSession();             // START A NEW WORK SESSION
+  if (pause === false && working === false) {     // CHEKS OF PROGRAM IS NOT ON PAUSE and PREVENTS  TIMER FROM STARTING AGAIN
+    startSession();                               // START A NEW WORK SESSION
+    working = true;
 
   } else if (pause === true) {  // CHECKS IF PROGRAM IS ON PAUSE
     pause = false;              // CHANGES PAUSE VALUE (TO UNPAUSE)
@@ -186,11 +197,23 @@ startInt.addEventListener('click', ()=>{
 
 });
 
+resetBtn.addEventListener('click', (e)=> {
+  let element = e.target;
+
+  if (element === resetBtn) {
+    clearInterval(timer);
+    working = false;
+    sessionSetUp();
+  }
+})
+
+
 alertContainer.addEventListener('click', (e)=> {
   let element = e.target;
 
   if (element.innerText === 'Break') {               // CHECKS IF BREAK BTN IS CLICKED
     onBreak = true;
+    working = false;
     stopBell();
     breakSession();                                  // TRIGGERS BREAK SESSION FUNCTION
     alertContainer.style.display = "none";           // HIDES ALERT BOX
