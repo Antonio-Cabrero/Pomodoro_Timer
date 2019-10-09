@@ -190,13 +190,13 @@ function stopBell() {  // STOPS AND RESETS THE BELL SOUND
 
 function hideButtons () {
 
-  
   startInt.disabled = true
   pauseInt.disabled = true
   startInt.style.opacity = "0"
   pauseInt.style.opacity = "0"
   startInt.style.transform = "translateX(150px)"
   pauseInt.style.transform = "translateX(-150px)"
+  resetBtn.style.zIndex = "5"
   resetBtn.innerText = "Ok"
 }
 
@@ -208,6 +208,7 @@ function unhideButtons() {
     pauseInt.style.transform = "translateX(0px)"
     startInt.disabled = false
     pauseInt.disabled = false
+    resetBtn.style.zIndex = "0"
     resetBtn.innerText = "Reset"
 }
 
