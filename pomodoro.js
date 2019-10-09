@@ -48,10 +48,15 @@ function sessionTimer() {
   }, 1000)
 }
 
+function setMinutes () {
+  if (intervalMin !== null) { return minutes = intervalMin} 
+  minutes = 20
+}
+
 function sessionSetUp () {                   // SETS THE TIME OF THE SESSION
   
-if (intervalMin !== null) { minutes = intervalMin; }   // IF NO CUSTOM INTERVAL WAS GIVEN THEN DEFAULT IS SET                                          
-  seconds = 0;
+  setMinutes()  // IF NO CUSTOM INTERVAL WAS GIVEN THEN DEFAULT IS SET                                          
+  seconds = 0
   timerSec.innerHTML = "00"; 
   timerMin.innerHTML = `${minutes}`; 
 }
@@ -212,9 +217,11 @@ function validateInput() {
   let test = input.replace(reg, '')
 
   if (test !== "" && test > 0) {
+   intervalMin = test
    return timerField.value = test
   }
   let warning = prompt('Use numbers only (from 1 to 60)')
+  intervalMin = warning
   timerField.value = warning
   return warning
 }
@@ -240,6 +247,7 @@ resetBtn.addEventListener('click', (e)=> {
   if (element === resetBtn) {
     clearInterval(timer);
     working = false;
+    timerBody.style.backgroundColor = "#660b0b"
     sessionSetUp();
   }
 })
@@ -275,7 +283,7 @@ timerBody.addEventListener('click', (e)=> {
       hideButtons()
     }
     
-    if (e.target === resetBtn) {
+    if (e.target.innerText === "Ok") {
         intervalMin = validateInput();
         timerField.style.display = "none";
         timerMin.innerText = `${intervalMin}`;
