@@ -4,6 +4,7 @@
 
 const timerSec = document.getElementById('sec'),
       timerMin = document.getElementById('minutes'),
+      timerField = document.querySelector('.userMin'),
       startInt = document.querySelector('.start'),
       resetBtn = document.querySelector('.reset'),
       pauseInt = document.querySelector('.stop'),
@@ -12,7 +13,6 @@ const timerSec = document.getElementById('sec'),
       alertContainer = document.querySelector('#alert'),
       breakBtn = document.querySelector('.break'),
       continueBtn = document.querySelector('.continue');
-
 
 
 // Chime Sound
@@ -28,6 +28,7 @@ let pause = false;            // TRACKER FOR PAUSE ACTION
 let workSession = 0;          // TRACKER FOR WORK SESSIONS
 let seconds = 0;              // SETS SECONDS
 let minutes;                
+let intervalMin = null;
 
 timerSec.innerHTML = "00"; 
 timerMin.innerHTML = "20"; 
@@ -47,12 +48,17 @@ function sessionTimer() {
   }, 1000)
 }
 
-function sessionSetUp () {
+function setMinutes () {
+  if (intervalMin !== null) { return minutes = intervalMin} 
+  minutes = 20
+}
+
+function sessionSetUp () {                   // SETS THE TIME OF THE SESSION
   
-  minutes = 20;                                  // SETS THE TIME OF THE SESSION
-  seconds = 0;
+  setMinutes()  // IF NO CUSTOM INTERVAL WAS GIVEN THEN DEFAULT IS SET                                          
+  seconds = 0
   timerSec.innerHTML = "00"; 
-  timerMin.innerHTML = "20"; 
+  timerMin.innerHTML = `${minutes}`; 
 }
 
 function startSession () {
@@ -182,6 +188,44 @@ function stopBell() {  // STOPS AND RESETS THE BELL SOUND
   chimeBell.currentTime = 0;
 }
 
+function hideButtons () {
+
+  
+  startInt.disabled = true
+  pauseInt.disabled = true
+  startInt.style.opacity = "0"
+  pauseInt.style.opacity = "0"
+  startInt.style.transform = "translateX(150px)"
+  pauseInt.style.transform = "translateX(-150px)"
+  resetBtn.innerText = "Ok"
+}
+
+function unhideButtons() {
+ 
+    startInt.style.opacity = "1"
+    pauseInt.style.opacity = "1"
+    startInt.style.transform = "translateX(0px)"
+    pauseInt.style.transform = "translateX(0px)"
+    startInt.disabled = false
+    pauseInt.disabled = false
+    resetBtn.innerText = "Reset"
+}
+
+function validateInput() {
+  let reg = /\D/g
+  let input =timerField.value
+  let test = input.replace(reg, '')
+
+  if (test !== "" && test > 0) {
+   intervalMin = test
+   return timerField.value = test
+  }
+  let warning = prompt('Use numbers only (from 1 to 60)')
+  intervalMin = warning
+  timerField.value = warning
+  return warning
+}
+
 // Listeners
 
 startInt.addEventListener('click', ()=>{ 
@@ -203,6 +247,7 @@ resetBtn.addEventListener('click', (e)=> {
   if (element === resetBtn) {
     clearInterval(timer);
     working = false;
+    timerBody.style.backgroundColor = "#660b0b"
     sessionSetUp();
   }
 })
@@ -229,3 +274,22 @@ alertContainer.addEventListener('click', (e)=> {
   }
 
 });
+
+timerBody.addEventListener('click', (e)=> {
+  
+    if (e.target === timerMin && working === false) {
+      timerMin.style.display = "none"
+      timerField.style.display = "inline-block"
+      hideButtons()
+    }
+    
+    if (e.target.innerText === "Ok") {
+        intervalMin = validateInput();
+        timerField.style.display = "none";
+        timerMin.innerText = `${intervalMin}`;
+        timerMin.style.display = "block";
+        unhideButtons()
+    }
+})
+
+ 

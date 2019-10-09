@@ -13,7 +13,8 @@
         <div class="container">
             <div class=" pomodoro container mx-auto mt-5 py-4 rounded">
                 <h1 class="display-4 text-center mt-4 mb-4">Pomodoro Timer</h1>
-                <div class="timer mx-auto">
+                <div id="clock" class="timer mx-auto">
+                    <input class="userMin" type="text" maxlength="2" autofocus>
                     <span id="minutes">00</span>
                     <span>:</span>
                     <span id="sec">00</span>
@@ -71,7 +72,8 @@
                             </ol>
                             <ul class="ml-3">
                                 <li>If you get interrupted you can always pause the timer with the pause button.</li>
-                                <li>To reset the work session counter finish 4 work sessions or reload the page.</li>
+                                <li>To reset the work session counter finish 4 work sessions or click on the reset button.</li>
+                                <li>To set your own time interval click on the minutes and provide the desired interval and press "Ok"</li>
                             </ul>
                         </div>
                       </div>

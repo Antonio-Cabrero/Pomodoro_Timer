@@ -1,0 +1,17 @@
+#### Version 1.2.1 #####
+
+v 1.2.1 - What's New?
+    -Users are now able to input their desired interval time
+    -Added versioning notes
+
+v 1.1.1 -Notes
+    - Added reset button
+    - Added sound to alert users that work or break session has ended
+
+v 1.0.1 -Notes
+    - Fixed bug: if start button was pressed more than once, timer would speed up.
+
+v 1.0 - Notes
+    - Users had a defaul 20 min interval sessions
+    - 4 Work sessions
+    - Ability to pause the timer
