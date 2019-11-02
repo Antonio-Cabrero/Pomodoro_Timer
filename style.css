@@ -7,23 +7,20 @@
     font-family: 'Roboto';
 }
 
-
-
 .pomodoro {
   display: flex;
   justify-content: center;
   align-items: center;
   
   box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.05), 0px 2px 25px rgba(0, 0, 0, 0.24), 0px 3px 10px rgba(0, 0, 0, 0.22);
-
-   position: relative;
-   color: #fff;
-   background-color: #D05E5E;
-   border-radius: 50%;
-   width: 200px;
-   height: 200px;
-   margin: 0 auto;
-   margin-top: 73px;
+  position: relative;
+  color: #fff;
+  background-color: #D05E5E;
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  margin-top: 73px;
 }
 
 .work-counter {
@@ -83,12 +80,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-    
-.start,
-.stop {
-    opacity: 1;
-    transition: all 1s ease;
+  opacity: 1;
+  transition: all 1s ease;
 }
 
 .info,
@@ -100,12 +93,6 @@
     align-items: center;
 }
 
-
-
-/* span {
-    font-size: 3rem;
-    margin: 0 15px;
-} */
 
 #minutes {
   font-size: 72px;
@@ -152,6 +139,10 @@ button {
 }
 /* BOOTSTRAP CUSTOM */
 
+#accordion {
+    margin-top: 2em;
+}
+
 .display-4 {
     color: #fff;
 }
@@ -167,9 +158,16 @@ button {
 }
 
 .card {
-    border: none;
+    margin: 25px 0;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.05), 
+                0px 8px 10px rgba(0, 0, 0, 0.15),
+                0px 3px 4px rgba(0, 0, 0, 0.25)
 }
 
 .card-header {
     background-color: transparent;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight:bold;
 }
+
