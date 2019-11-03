@@ -4,66 +4,103 @@
 
 const timerSec = document.getElementById('sec'),
       timerMin = document.getElementById('minutes'),
-      startInt = document.querySelector('.start'),
-      pauseInt = document.querySelector('.stop'),
+      timerField = document.querySelector('.userMin'),
+      startBtn = document.querySelector('.start'),
+      resetBtn = document.querySelector('.reset'),
       timerBody = document.querySelector('.pomodoro'),
       workCounter = document.querySelector('.work-counter').children,
       alertContainer = document.querySelector('#alert'),
       breakBtn = document.querySelector('.break'),
-      continueBtn = document.querySelector('.continue');
+      continueBtn = document.querySelector('.continue'),
+      infoBtn = document.querySelector('.info'),
+      infoDiv = document.querySelector('#accordion'),
+      btnsContainer = document.querySelector('.buttons');
 
+
+// Chime Sound
+
+const chimeBell = document.querySelector('.chime');
 
 // Key Variables
 
-let shortBreak = false;       // TRACKER FOR SHORT BREAK
-let longBreak = false;         // TRACKER FOR LONG BREAK
+let timer;
+let working = false;
+let onBreak = false;
 let pause = false;            // TRACKER FOR PAUSE ACTION
-let workSession = 0;          // TRACKER FOR WORK SESSIONS
+let workSession = 3;          // TRACKER FOR WORK SESSIONS
 let seconds = 0;              // SETS SECONDS
 let minutes;                
+let intervalMin = null;
 
 timerSec.innerHTML = "00"; 
-timerMin.innerHTML = "00"; 
+timerMin.innerHTML = "20"; 
 
 
 // Functions
 
-function sessionTimer() { 
+function timerFunction() { 
   
-  let timer = setInterval( () => { // RUNS EACH FUNCTION EVERY SECOND
+  timer = setInterval( () => { // RUNS EACH FUNCTION EVERY SECOND
     
-    
-    pauseBtn(timer);              //  CHECKS FOR PAUSING
-    secondsCounter();             //  SUBTRACTS 1 SECOND & CHECKS IF SECONDS IS NOT 0, IF ITS THEN IT SUBSTRACTS 1 FROM MINUTES AND RESETS THE SECONDS 
+    secondsDeductor();             //  SUBTRACTS 1 SECOND & CHECKS IF SECONDS IS NOT 0, IF ITS THEN IT SUBSTRACTS 1 FROM MINUTES AND RESETS THE SECONDS 
     printTime();                  //  PRINTS NUMBERS TO DOM
     timerStop(timer);             //  STOPS TIMER IF MINUTES & SECONDS REACHES 0
 
   }, 1000)
+}
+
+function setDefault () {
+  if (intervalMin !== null) { return minutes = intervalMin} 
+  minutes = 20
+}
+
+function sessionSetUp () {                   // SETS THE TIME OF THE SESSION
   
+  setDefault()  // IF NO CUSTOM INTERVAL WAS GIVEN THEN DEFAULT IS SET                                          
+  seconds = 0
+  printTime()
 }
 
 function startSession () {
   
-  timerBody.style.backgroundColor = '#399721';  // SETS BACK GROUND TO COLOR FOR 'IN WORK SESSION'
-  minutes = 20;                                  // SETS THE TIME OF THE SESSION
-  sessionTimer();                               // STARTS TIMER
-
+  timerBody.style.backgroundColor = '#6ED05E';  // SETS BACK GROUND TO COLOR FOR 'IN WORK SESSION'
+  sessionSetUp();
+  timerFunction();                               // STARTS TIMER
+  working = true;
 } 
 
 function breakSession () { // STARTS A BREAK TIMER
   
   if (workSession === 4) {  // CHECK IF USER HAS HAD 4 WORK SESSIONS (COUNTER STARTS AT 0)
     minutes = 20;           // LONG BREAK IS SET
+    timerFunction();         // TIMER STARTS
     resetWork();
-    sessionTimer();         // TIMER STARTS
-
+    startBtn.style.opacity = "0"
+    startBtn.disabled = true
    } else {
-    
     minutes = 5;            // SETS A SMALL BREAK
-    sessionTimer();         // TIMER STARTS
+    timerFunction();         // TIMER STARTS
+    startBtn.style.opacity = "0"
+    startBtn.disabled = true
 
   }
 
+}
+
+function displayToogle(element) {
+  if (element.style.display === "none") {
+    element.style.display = "block";
+  } else {
+    element.style.display = "none"
+  }
+}
+
+function fadeToogle(element) {
+  if (element.style.opacity === "0") {
+    element.style.opacity = "1";
+  } else {
+    element.style.opacity = "0"
+  }
 }
 
 function printTime () {   
@@ -81,7 +118,7 @@ function printTime () {
 
 }
 
-function secondsCounter() {
+function secondsDeductor() {
 
   seconds -= 1;         // DECREASES SECONDS BY 1
   if (seconds === -1) {  
@@ -94,27 +131,17 @@ function secondsCounter() {
 function timerStop(timer) {
 
   if (minutes === 0 && seconds === 0) {
+    
     clearInterval(timer);                                                 // STOPS INTERVAL
-    timerBody.style.backgroundColor = '#1e7fda';                          // Bg COLOR CHANGE TO BREAK COLOR
-    workCounter[ workSession ].style.backgroundColor = '#399721';         // ADD 1 TO WORK SESSION TRACKER
+    timerBody.style.backgroundColor = '#5E99D0';                          // Bg COLOR CHANGE TO BREAK COLOR
+    workCounter[ workSession ].style.backgroundColor = '#6ED05E';         // ADD 1 TO WORK SESSION TRACKER
     workSession += 1;                                                     // ALSO ADD 1 TO THE VARIABLE WORK COUNTER
     alertDisplay();
   } 
 
 }
 
-function pauseBtn(timer){         // CREATES EVENT LISTENER FOR PAUSE BTN
-  pauseInt.addEventListener('click', (e) => {
-      
-    let element = e.target;
-    if (element === pauseInt){    // CHECKS IF PAUSE BUTTON IS CLICKED
-    
-      pause = true;               // CHANGES VALUE OF PAUSE VARIABLE
-      clearInterval(timer);       // STOPS INTERVAL  
-    } 
-  })
 
-}
 
 function resetWork() {
 
@@ -129,61 +156,192 @@ function alertDisplay () {
 
   let text = document.querySelector('.modal-content');
   
-
+  chimeBell.play();                                   // PLAY CHIME BELL
+  
   alertContainer.style.display = "block";            // DISPLAY ALERT
 
-  if (workSession === 4) {                           // DISPLAYS LONG BREAK MESSAGE
-    text.innerHTML = `
-      <h2 class="modal-title mx-auto mt-3">It's time for a LOONG break!</h2>
-      <p class="modal-body mx-auto">Go out for a walk, stretch a bit or just go get something to eat</p>
-      <div class="mx-auto my-3">
-          <button class="btn btn-outline-primary break">Break</button>
+  if (onBreak === true) {                                                               // DISPLAYS BACK TO WORK MESSAGE
+    text.innerHTML =
+    `<h2 class="modal-title display-4 mx-auto mt-3">It's time to work!</h2>
+      <p class="modal-body mx-auto">Keep on the good work after that nice break!</p>
+      <div class="mx-auto mb-3">
+      <button class="btn btn-outline-success continue">Keep going!</button>
       </div>
-    `
-  } else if (workSession < 4) {                     // DISPLAYS SHORT BREAK MESSAGE
+      `;
+    startBtn.style.opacity = "1";
+    startBtn.disabled = false
+
+  } else if (workSession === 4) {                                                       // DISPLAYS LONG BREAK MESSAGE
     text.innerHTML = `
-      <h2 class="modal-title mx-auto mt-3">It's time for a short break!</h2>
+      <h2 class="modal-title display-4 mx-auto mt-3">It's time for a long break!</h2>
+      <p class="modal-body mx-auto">Go walk for a bit, get something to eat or just stretch it out! You've earned it!</p>
+      <div class="mx-auto mb-3">
+          <button class="btn btn-outline-primary break">Long Break</button>
+      </div>
+    ` ;
+  } else if (workSession < 4) {                                                       // DISPLAYS SHORT BREAK MESSAGE
+    text.innerHTML = `
+      <h2 class="modal-title display-4 mx-auto mt-3">It's time for a short break!</h2>
       <p class="modal-body mx-auto">Go get a coffee or a snack, walk a bit or would you like to keep going?</p>
-      <div class="mx-auto my-3">
-        <button class="btn btn-outline-primary break">Break</button>
-        <button class="btn btn-outline-success continue">Keep going!</button>
+      <div class="mx-auto mb-3">
+          <button class="btn btn-outline-primary break">Break</button>
+          <button class="btn btn-outline-success continue">Keep going!</button>
       </div>
-      `
+      `;
   }
+}
+
+function stopBell() {  // STOPS AND RESETS THE BELL SOUND
+  chimeBell.pause();
+  chimeBell.currentTime = 0;
+}
 
 
+function validateInput() {
+  let reg = /\D/g
+  let input =timerField.value
+  let test = input.replace(reg, '')
+
+  if (test !== "" && test > 0) {
+   intervalMin = test
+   return timerField.value = test
+  }
+  let warning = prompt('Use numbers only (from 1 to 60)')
+  intervalMin = warning
+  timerField.value = warning
+  return warning
 }
 
 // Listeners
-
-startInt.addEventListener('click', ()=>{ 
-
-  if (pause === false) {        // CHEKS OF PROGRAM IS NOT ON PAUSE
-    startSession();             // START A NEW WORK SESSION
-
-  } else if (pause === true) {  // CHECKS IF PROGRAM IS ON PAUSE
-    pause = false;              // CHANGES PAUSE VALUE (TO UNPAUSE)
-    sessionTimer();             // CONTINUES TIMER
-  }
-
-});
 
 alertContainer.addEventListener('click', (e)=> {
   let element = e.target;
 
   if (element.innerText === 'Break') {               // CHECKS IF BREAK BTN IS CLICKED
-
-    breakSession();                         // TRIGGERS BREAK SESSION FUNCTION
-    alertContainer.style.display = "none";  // HIDES ALERT BOX
+    onBreak = true;
+    working = false;
+    stopBell();
+    breakSession();                                  // TRIGGERS BREAK SESSION FUNCTION
+    displayToogle(alertContainer)          // HIDES ALERT BOX
 
   } 
 
   if (element.innerText === 'Keep going!') {            // CHECKS IF BREAK BTN IS CLICKED
-
-    startSession();                         // TRIGGERS WORK SESSION FUNCTION
-    alertContainer.style.display = "none";  // HIDES ALERT BOX
-
+    onBreak = false;
+    stopBell();
+    startSession();                                     // TRIGGERS WORK SESSION FUNCTION
+    displayToogle(alertContainer)          // HIDES ALERT BOX
   }
+
+  if (element.innerText === 'Long Break') {               // CHECKS IF BREAK BTN IS CLICKED
+    onBreak = true;
+    working = false;
+    stopBell();
+    breakSession();                                  // TRIGGERS BREAK SESSION FUNCTION
+    displayToogle(alertContainer)          // HIDES ALERT BOX
+
+  } 
+});
+
+timerBody.addEventListener('click', (e)=> {
+  
+  if (e.target === timerMin && working === false) {
+      if (timerField.value !== "") {
+        timerField.value = ""
+      }
+    displayToogle(timerMin)
+    startBtn.disabled = true
+    timerField.style.display = "inline-block"
+    resetBtn.innerHTML = "OK"
+  }
+
+    
+})
+
+ infoBtn.addEventListener('click', ()=> {
+
+  const cards = document.querySelectorAll(".card")
+  const card = document.querySelector(".card")
+
+  if (card.style.display === "none"){
+    cards.forEach(element => {
+      displayToogle(element)
+    });
+    setTimeout(()=>{
+      cards.forEach(element => {
+        fadeToogle(element)
+      })
+    },50)
+    
+  } else {
+    cards.forEach(element => {
+      fadeToogle(element)
+    });
+    setTimeout(()=>{
+      cards.forEach(element => {
+        displayToogle(element)
+      })
+    },400)
+  }
+  // cards.forEach(element => {
+  //   fadeToogle(element)
+  // })
+ 
+
+ })
+
+ startBtn.addEventListener('click', ()=>{ 
+
+  if (pause === false && working === false) {     // CHEKS OF PROGRAM IS NOT ON PAUSE and PREVENTS  TIMER FROM STARTING AGAIN
+    startSession();                               // START A NEW WORK SESSION
+    startBtn.innerHTML = `<svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0H13.2174V42H0V0Z" fill="#313131"/>
+                            <path d="M18.7826 0H32V42H18.7826V0Z" fill="#313131"/>
+                          </svg>`
+
+  } 
+  else  if (working === true && pause === false){    // CHECKS IF PAUSE BUTTON IS CLICKED   
+    pause = true;               // CHANGES VALUE OF PAUSE VARIABLE
+    clearInterval(timer);       // STOPS INTERVAL  
+    startBtn.innerHTML = `<svg width="40" height="52" viewBox="-5 0 40 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M36 26L0.750001 51.1147L0.750004 0.885262L36 26Z" fill="#000"/>
+                          </svg>`
+  }
+  
+  else if (working === true && pause === true) {  // CHECKS IF PROGRAM IS ON PAUSE
+    pause = false;              // CHANGES PAUSE VALUE (TO UNPAUSE)
+    timerFunction();             // CONTINUES TIMER
+    startBtn.innerHTML = `<svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M0 0H13.2174V42H0V0Z" fill="#313131"/>
+                            <path d="M18.7826 0H32V42H18.7826V0Z" fill="#313131"/>
+                          </svg>`
+}
 
 });
 
+ resetBtn.addEventListener('click', ()=> {
+
+  resetWork();
+  clearInterval(timer);
+  working = false;
+  pause = false;
+  onBreak = false;
+  startBtn.style.opacity = "1";
+  startBtn.disabled = false;
+  timerBody.style.backgroundColor = "#D05E5E"
+  startBtn.innerHTML =  `<svg width="40" height="52" viewBox="-5 0 40 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M36 26L0.750001 51.1147L0.750004 0.885262L36 26Z" fill="#000"/>
+                        </svg>`
+  sessionSetUp();
+
+if (resetBtn.innerHTML === "OK") {
+  intervalMin = validateInput();
+  displayToogle(timerField)
+  minutes = intervalMin
+  printTime()
+  timerMin.style.display = "block";
+  resetBtn.innerHTML = `<svg width="37" height="38" viewBox="0 0 37 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M5.75945 11.1315C7.5283 8.50113 10.106 6.51871 13.1023 5.48435L15.4924 12.4081C14.0011 12.9229 12.718 13.9097 11.8376 15.2189C10.9572 16.5281 10.5273 18.0886 10.613 19.664C10.6987 21.2394 11.2954 22.744 12.3127 23.95C13.3299 25.156 14.7125 25.9977 16.2509 26.3477C17.7893 26.6977 19.3999 26.5369 20.8388 25.8897C22.2777 25.2425 23.4665 24.1441 24.2254 22.7608C24.9842 21.3775 25.2717 19.7847 25.0443 18.2234C24.8797 17.0937 24.4521 16.0251 23.8033 15.1004L21.234 18.314L16.7577 4.78024L30.9449 6.16777L28.4701 9.26313C30.5232 11.4397 31.86 14.1988 32.2925 17.1677C32.7493 20.3044 32.1718 23.5045 30.6472 26.2836C29.1227 29.0627 26.7343 31.2694 23.8434 32.5697C20.9526 33.87 17.7169 34.193 14.6261 33.4898C11.5353 32.7867 8.75769 31.0956 6.71389 28.6728C4.67009 26.2499 3.47134 23.227 3.29912 20.0619C3.12691 16.8968 3.9906 13.7618 5.75945 11.1315Z" fill="#313131"/>
+                        </svg>`
+}
+})
